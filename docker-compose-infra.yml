@@ -1,0 +1,80 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8.0.30
+    container_name: mysql
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: nacos_devtest
+      MYSQL_USER: nacos
+      MYSQL_PASSWORD: nacos
+    networks:
+      - mcp-net
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+  nacos:
+    image: nacos/nacos-server:v3.1.2
+    container_name: nacos-standalone
+    depends_on:
+      mysql:
+        condition: service_healthy
+    ports:
+      - "8848:8848"
+      - "9848:9848"
+      - "8080:8080"
+    environment:
+      MODE: standalone
+      SPRING_DATASOURCE_PLATFORM: mysql
+      MYSQL_SERVICE_HOST: mysql
+      MYSQL_SERVICE_DB_NAME: nacos_devtest
+      MYSQL_SERVICE_USER: nacos
+      MYSQL_SERVICE_PASSWORD: nacos
+      NACOS_AUTH_ENABLE: "true"
+      NACOS_AUTH_TOKEN: SecretKey0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF
+      NACOS_AUTH_IDENTITY_KEY: serverIdentity
+      NACOS_AUTH_IDENTITY_VALUE: security
+      NACOS_USER: nacos
+      NACOS_PASSWORD: nacos
+      TIME_ZONE: Asia/Shanghai
+    networks:
+      - mcp-net
+    restart: unless-stopped
+
+  redis:
+    image: redis:latest
+    container_name: redis
+    ports:
+      - "6379:6379"
+    command: --requirepass admin1234
+    networks:
+      - mcp-net
+    restart: unless-stopped
+
+  higress:
+    image: higress-registry.cn-hangzhou.cr.aliyuncs.com/higress/all-in-one:latest
+    container_name: higress
+    depends_on:
+      - nacos
+      - redis
+    ports:
+      - "8001:8001"
+      - "8081:8080"
+      - "8443:8443"
+    volumes:
+      - /app/higress:/data
+    networks:
+      - mcp-net
+    restart: unless-stopped
+
+networks:
+  mcp-net:
+    driver: bridge
+    name: mcp-net

@@ -1,0 +1,24 @@
+services:
+  nacos-mcp-demo:
+    image: "nacos-mcp-demo:${IMAGE_TAG:-latest}"
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: nacos-mcp-demo
+    ports:
+      - "8082:8082"
+    environment:
+      - SPRING_CLOUD_NACOS_DISCOVERY_SERVER_ADDR=http://nacos-standalone:8848
+      - SPRING_CLOUD_NACOS_DISCOVERY_USERNAME=nacos
+      - SPRING_CLOUD_NACOS_DISCOVERY_PASSWORD=nacos
+      - SPRING_CLOUD_NACOS_DISCOVERY_NAMESPACE=public
+      - SPRING_CLOUD_NACOS_DISCOVERY_GROUP=DEFAULT_GROUP
+      - SPRING_CLOUD_NACOS_DISCOVERY_REGISTER_ENABLED=true
+    networks:
+      - mcp-net
+    restart: unless-stopped
+
+networks:
+  mcp-net:
+    external: true
+    name: mcp-net

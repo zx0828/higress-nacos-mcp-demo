@@ -1,0 +1,56 @@
+server:
+  port: 8082
+
+spring:
+  application:
+    name: nacos-mcp-demo
+  cloud:
+    nacos:
+      # Nacos 服务注册与发现
+      discovery:
+        server-addr: http://172.30.187.161:8848
+        username: nacos
+        password: nacos
+        namespace: public
+        group: DEFAULT_GROUP
+        register-enabled: true
+      # Nacos 配置中心（暂时禁用，仅使用服务注册）
+      config:
+        enabled: false
+  # MySQL 数据源配置
+  datasource:
+    url: jdbc:mysql://172.30.187.161:3306/app?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+    username: root
+    password: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+# MyBatis 配置
+mybatis:
+  mapper-locations: classpath:mapper/*.xml
+  type-aliases-package: com.example.mcp.entity
+  configuration:
+    map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+# MCP Server 配置
+mcp:
+  server:
+    name: demo-mcp-server
+    description: Nacos MCP Demo Server - 提供用户管理和订单查询服务
+    version: 1.0.0
+
+# Actuator 配置
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: always
+
+# 日志配置
+logging:
+  level:
+    com.example.mcp: DEBUG
+    com.alibaba.cloud.nacos: INFO

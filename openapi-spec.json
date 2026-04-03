@@ -1,0 +1,669 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "nacos-mcp-demo API",
+    "description": "用户管理和订单管理 API 服务",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/api/orders": {
+      "get": {
+        "summary": "获取所有订单",
+        "description": "获取系统中的所有订单列表",
+        "operationId": "getAllOrders",
+        "tags": ["订单管理"],
+        "responses": {
+          "200": {
+            "description": "成功获取订单列表",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Order"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "创建订单",
+        "description": "创建新订单，包含产品详情、数量、价格和用户信息",
+        "operationId": "createOrder",
+        "tags": ["订单管理"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OrderInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "订单创建成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Order"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/orders/{id}": {
+      "get": {
+        "summary": "根据 ID 获取订单",
+        "description": "根据订单 ID 获取订单详情",
+        "operationId": "getOrderById",
+        "tags": ["订单管理"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "订单 ID，例如：ORDER-001",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功获取订单",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Order"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/orders/{id}/status": {
+      "patch": {
+        "summary": "更新订单状态",
+        "description": "更新订单状态（如：待处理、已发货、已完成）",
+        "operationId": "updateOrderStatus",
+        "tags": ["订单管理"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "订单 ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "status": {
+                    "type": "string",
+                    "description": "新状态，例如：pending, shipped, completed"
+                  }
+                },
+                "required": ["status"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "订单状态更新成功"
+          }
+        }
+      }
+    },
+    "/api/orders/user/{userId}": {
+      "get": {
+        "summary": "根据用户 ID 获取订单",
+        "description": "根据用户 ID 获取该用户的所有订单",
+        "operationId": "getOrdersByUserId",
+        "tags": ["订单管理"],
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "description": "用户 ID，例如：user-1",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功获取用户订单列表",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Order"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/employee/position": {
+      "get": {
+        "summary": "根据姓名查询员工岗位",
+        "description": "根据员工姓名查询工作岗位信息",
+        "operationId": "getJobPosition",
+        "tags": ["员工管理"],
+        "parameters": [
+          {
+            "name": "name",
+            "in": "query",
+            "required": true,
+            "description": "员工姓名",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功获取员工岗位信息",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string",
+                      "description": "员工姓名"
+                    },
+                    "position": {
+                      "type": "string",
+                      "description": "工作岗位"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "summary": "更新员工岗位",
+        "description": "根据员工姓名更新工作岗位信息",
+        "operationId": "updateEmployeePosition",
+        "tags": ["员工管理"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "员工姓名"
+                  },
+                  "position": {
+                    "type": "string",
+                    "description": "工作岗位，例如：后端开发、前端开发、产品经理等"
+                  }
+                },
+                "required": ["name", "position"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "员工岗位更新成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string",
+                      "description": "员工姓名"
+                    },
+                    "position": {
+                      "type": "string",
+                      "description": "更新后的工作岗位"
+                    },
+                    "updated": {
+                      "type": "boolean",
+                      "description": "是否更新成功"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/employee/list": {
+      "get": {
+        "summary": "获取所有员工",
+        "description": "获取系统中所有员工列表，按姓名排序",
+        "operationId": "getAllEmployees",
+        "tags": ["员工管理"],
+        "responses": {
+          "200": {
+            "description": "成功获取员工列表",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Employee"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/employee": {
+      "post": {
+        "summary": "创建员工",
+        "description": "创建新员工，包含姓名和岗位信息",
+        "operationId": "createEmployee",
+        "tags": ["员工管理"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "员工姓名"
+                  },
+                  "position": {
+                    "type": "string",
+                    "description": "工作岗位，例如：后端开发、前端开发、产品经理等"
+                  }
+                },
+                "required": ["name", "position"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "员工创建成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Employee"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/employee/{id}": {
+      "delete": {
+        "summary": "删除员工",
+        "description": "根据员工 ID 删除员工",
+        "operationId": "deleteEmployee",
+        "tags": ["员工管理"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "员工 ID",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "员工删除成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "integer",
+                      "description": "员工 ID"
+                    },
+                    "deleted": {
+                      "type": "boolean",
+                      "description": "是否删除成功"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/users": {
+      "get": {
+        "summary": "获取所有用户",
+        "description": "获取系统中的所有用户列表",
+        "operationId": "getAllUsers",
+        "tags": ["用户管理"],
+        "responses": {
+          "200": {
+            "description": "成功获取用户列表",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/User"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "创建用户",
+        "description": "创建新用户，包含姓名、邮箱等个人信息",
+        "operationId": "createUser",
+        "tags": ["用户管理"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "用户创建成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/users/{id}": {
+      "get": {
+        "summary": "根据 ID 获取用户",
+        "description": "根据用户 ID 获取用户详细信息",
+        "operationId": "getUserById",
+        "tags": ["用户管理"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "用户 ID，例如：user-1",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功获取用户信息",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "summary": "更新用户",
+        "description": "根据用户 ID 更新用户信息",
+        "operationId": "updateUser",
+        "tags": ["用户管理"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "用户 ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "用户信息更新成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "删除用户",
+        "description": "根据用户 ID 删除用户",
+        "operationId": "deleteUser",
+        "tags": ["用户管理"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "用户 ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "用户删除成功"
+          }
+        }
+      }
+    },
+    "/api/users/name/{name}": {
+      "get": {
+        "summary": "根据名称搜索用户",
+        "description": "根据用户姓名搜索用户",
+        "operationId": "getUserByName",
+        "tags": ["用户管理"],
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "description": "用户姓名",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功获取用户列表",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/User"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Order": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "订单 ID",
+            "example": "ORDER-001"
+          },
+          "userId": {
+            "type": "string",
+            "description": "用户 ID",
+            "example": "user-1"
+          },
+          "product": {
+            "type": "string",
+            "description": "产品名称",
+            "example": "iPhone 15 Pro"
+          },
+          "quantity": {
+            "type": "integer",
+            "description": "数量",
+            "example": 1
+          },
+          "price": {
+            "type": "number",
+            "description": "价格",
+            "example": 7999
+          },
+          "status": {
+            "type": "string",
+            "description": "订单状态",
+            "enum": ["pending", "shipped", "completed"],
+            "example": "completed"
+          },
+          "createTime": {
+            "type": "string",
+            "description": "创建时间",
+            "example": "2024-01-15 10:30:00"
+          }
+        }
+      },
+      "OrderInput": {
+        "type": "object",
+        "properties": {
+          "userId": {
+            "type": "string",
+            "description": "用户 ID"
+          },
+          "product": {
+            "type": "string",
+            "description": "产品名称"
+          },
+          "quantity": {
+            "type": "integer",
+            "description": "数量"
+          },
+          "price": {
+            "type": "number",
+            "description": "价格"
+          }
+        },
+        "required": ["userId", "product", "quantity", "price"]
+      },
+      "User": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "用户 ID",
+            "example": "user-1"
+          },
+          "name": {
+            "type": "string",
+            "description": "用户姓名",
+            "example": "张三"
+          },
+          "email": {
+            "type": "string",
+            "description": "用户邮箱",
+            "example": "zhangsan@example.com"
+          }
+        }
+      },
+      "UserInput": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "用户姓名"
+          },
+          "email": {
+            "type": "string",
+            "description": "用户邮箱"
+          }
+        },
+        "required": ["name", "email"]
+      },
+      "Employee": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "员工 ID",
+            "example": 1
+          },
+          "name": {
+            "type": "string",
+            "description": "员工姓名",
+            "example": "张三"
+          },
+          "position": {
+            "type": "string",
+            "description": "工作岗位",
+            "example": "后端开发"
+          },
+          "createTime": {
+            "type": "string",
+            "description": "创建时间",
+            "example": "2024-01-01 10:00:00"
+          }
+        }
+      }
+    }
+  }
+}

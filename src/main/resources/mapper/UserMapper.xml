@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.mcp.mapper.UserMapper">
+
+    <resultMap id="UserResultMap" type="com.example.mcp.entity.User">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="email" column="email"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+    <!-- 查询所有用户 -->
+    <select id="selectAll" resultMap="UserResultMap">
+        SELECT id, name, email, create_time, update_time
+        FROM users
+        ORDER BY create_time DESC
+    </select>
+
+    <!-- 根据ID查询用户 -->
+    <select id="selectById" resultMap="UserResultMap">
+        SELECT id, name, email, create_time, update_time
+        FROM users
+        WHERE id = #{id}
+    </select>
+
+    <!-- 根据姓名模糊查询用户 -->
+    <select id="selectByName" resultMap="UserResultMap">
+        SELECT id, name, email, create_time, update_time
+        FROM users
+        WHERE name LIKE CONCAT('%', #{name}, '%')
+        ORDER BY name
+    </select>
+
+    <!-- 插入用户 -->
+    <insert id="insert" parameterType="com.example.mcp.entity.User">
+        INSERT INTO users (id, name, email, create_time, update_time)
+        VALUES (#{id}, #{name}, #{email}, #{createTime}, #{updateTime})
+    </insert>
+
+    <!-- 更新用户 -->
+    <update id="update" parameterType="com.example.mcp.entity.User">
+        UPDATE users
+        SET name = #{name},
+            email = #{email},
+            update_time = #{updateTime}
+        WHERE id = #{id}
+    </update>
+
+    <!-- 删除用户 -->
+    <delete id="deleteById">
+        DELETE FROM users
+        WHERE id = #{id}
+    </delete>
+
+</mapper>
