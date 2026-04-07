@@ -1,0 +1,26 @@
+server:
+  tomcat:
+    basedir: ${user.home}/nacos/tomcat
+
+db:
+  num: 1
+  url:
+    0: jdbc:mysql://mysql:3306/nacos2?characterEncoding=utf8&connectTimeout=10000&socketTimeout=30000&autoReconnect=true&useUnicode=true&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+  user: nacos
+  password: nacos
+
+nacos:
+  core:
+    auth:
+      enabled: true
+      plugin:
+        nacos:
+          token:
+            secret:
+              key: SecretKey0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF
+          identity:
+            key: serverIdentity
+            value: security
+  security:
+    ignore:
+      urls: /actuator/**,/**/health

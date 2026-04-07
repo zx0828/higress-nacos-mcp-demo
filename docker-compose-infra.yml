@@ -32,18 +32,20 @@ services:
       - "8080:8080"
     environment:
       MODE: standalone
+      TZ: Asia/Shanghai
       SPRING_DATASOURCE_PLATFORM: mysql
       MYSQL_SERVICE_HOST: mysql
-      MYSQL_SERVICE_DB_NAME: nacos_devtest
+      MYSQL_SERVICE_PORT: 3306
+      MYSQL_SERVICE_DB_NAME: nacos2
       MYSQL_SERVICE_USER: nacos
       MYSQL_SERVICE_PASSWORD: nacos
-      NACOS_AUTH_ENABLE: "true"
+      MYSQL_SERVICE_DB_PARAM: characterEncoding=utf8&connectTimeout=10000&socketTimeout=30000&autoReconnect=true&useUnicode=true&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+      MYSQL_DATABASE_NUM: 1
       NACOS_AUTH_TOKEN: SecretKey0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF
       NACOS_AUTH_IDENTITY_KEY: serverIdentity
       NACOS_AUTH_IDENTITY_VALUE: security
-      NACOS_USER: nacos
-      NACOS_PASSWORD: nacos
-      TIME_ZONE: Asia/Shanghai
+    volumes:
+      - ./nacos-conf/application.yaml:/home/nacos/conf/application.yaml
     networks:
       - mcp-net
     restart: unless-stopped
@@ -76,5 +78,4 @@ services:
 
 networks:
   mcp-net:
-    driver: bridge
-    name: mcp-net
+    external: true
